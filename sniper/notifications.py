@@ -18,7 +18,7 @@ class Notifier():
         self.notifications = notification_config['notifications']
         self.queue = notification_queue
         self.gpu = target_gpu
-        if sys.platform == 'win32' and sys.version_info >= (3, 8, 0):
+        if sys.platform == 'win32' and sys.version_info >= (3, 8, 0): ##from sys library. OS and Python Version
             asyncio.set_event_loop_policy(
                 asyncio.WindowsSelectorEventLoopPolicy())
 

@@ -5,10 +5,10 @@ import logging
 import queue
 import asyncio
 try:
-    import coloredlogs
-    import colorama
+    import coloredlogs ##The coloredlogs package enables colored terminal output for Python’s logging module.
+    import colorama ##this library makes it easier to use colors in windows terminal 
 
-    from pick import pick
+    from pick import pick #pick is a small python library to help you create curses based interactive selection list in the terminal.
     from verboselogs import VerboseLogger
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
@@ -30,11 +30,11 @@ import sniper.constants as const
 import sniper.webdriver as webdriver
 import sniper.notifications as notify
 
-logger = VerboseLogger('root')
+logger = VerboseLogger('root') #THIS COMMANDS LOGS WARNINGS, ERRORS, INFOS, ETC.... 
 
-src_path = Path(__file__).parent
-data_path = src_path.parent / 'data'
-config_path = src_path.parent / 'config'
+src_path = Path(__file__).parent ## logical parent of the path  https://docs.python.org/3/library/pathlib.html
+data_path = src_path.parent / 'data' ## data folder
+config_path = src_path.parent / 'config' ## config folder
 
 
 def read_json(filename):
@@ -47,7 +47,7 @@ def update_sku_file(skus):
         f.write(json.dumps(skus, indent=4))
 
 
-def read_config():
+def read_config(): ## looks for notifications.json and customer.json if they don't exist asks to create them
     try:
         notification_config = read_json(config_path / 'notifications.json')
     except FileNotFoundError:
@@ -73,11 +73,11 @@ def read_config():
 
 
 def setup_logger():
-    log_format = '%(asctime)s %(levelname)s: %(message)s'
-    coloredlogs.install(level='DEBUG', fmt=log_format)
+    log_format = '%(asctime)s %(levelname)s: %(message)s' ##asctime is human readable date/time; levelname is level of error DEBUG INFO, WARNING ERROR CRITICAL
+    coloredlogs.install(level='DEBUG', fmt=log_format) ##The coloredlogs package enables colored terminal output for Python’s logging module.
 
-    file_handler = logging.FileHandler('sniper.log', encoding='utf-8')
-    file_handler.setFormatter(logging.Formatter(log_format))
+    file_handler = logging.FileHandler('sniper.log', encoding='utf-8') ##all logging is dumped here
+    file_handler.setFormatter(logging.Formatter(log_format)) # 
     logging.getLogger().addHandler(file_handler)
 
     logging.getLogger('WDM').disabled = True
@@ -89,15 +89,15 @@ def setup_logger():
         'selenium.webdriver.remote.remote_connection').disabled = True
 
 
-async def main():
+async def main(): ##asyncio is for concurrent programming
     colorama.init()
-    print(const.HEADER)
+    print(const.HEADER) ##esto va al archivo constants.py que tiene ascii art  
     setup_logger()
 
-    notification_config, customer = read_config()
+    notification_config, customer = read_config() ##la funcion regresa dos variables notification_config y customer
 
     driver = webdriver.create()
-    user_agent = driver.execute_script('return navigator.userAgent;')
+    user_agent = driver.execute_script('return navigator.userAgent;') ##esto regresa el User agent header; por ejemplo: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0
 
     gpu_data = read_json(data_path / 'gpus.json')
     target_gpu_name, _ = pick(list(gpu_data.keys()),
@@ -277,7 +277,7 @@ async def main():
         else:
             sleep(timeout)
 
-    await api_client.session.close()
+    await api_client.session.close() ##from asyncio: checkpoint where its safe for asyncio to go to another coroutine
     notification_queue.join()
 
 if __name__ == '__main__':
